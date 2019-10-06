@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JVideos!</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+      @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+.btn { display: inline-block; *display: inline; *zoom: 1; padding: 4px 10px 4px; margin-bottom: 0; font-size: 13px; line-height: 18px; color: #333333; text-align: center;text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); vertical-align: middle; background-color: #f5f5f5; background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6); background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6)); background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6); background-image: -o-linear-gradient(top, #ffffff, #e6e6e6); background-image: linear-gradient(top, #ffffff, #e6e6e6); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#ffffff, endColorstr=#e6e6e6, GradientType=0); border-color: #e6e6e6 #e6e6e6 #e6e6e6; border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25); border: 1px solid #e6e6e6; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); cursor: pointer; *margin-left: .3em; }
+.btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: #e6e6e6; }
+.btn-large { padding: 9px 14px; font-size: 15px; line-height: normal; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
+.btn:hover { color: #333333; text-decoration: none; background-color: #e6e6e6; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear; }
+.btn-primary, .btn-primary:hover { text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); color: #ffffff; }
+.btn-primary.active { color: rgba(255, 255, 255, 0.75); }
+.btn-primary { background-color: #FF9800; background-image: -moz-linear-gradient(top, #FF9800, #FF9800); background-image: -ms-linear-gradient(top, #FF9800, #FF9800); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#FF9800), to(#FF9800)); background-image: -webkit-linear-gradient(top, #FF9800, #FF9800); background-image: -o-linear-gradient(top, #FF9800, #FF9800); background-image: linear-gradient(top, #FF9800, #FF9800); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#6eb6de, endColorstr=#4a77d4, GradientType=0);  border: 1px solid #3762bc; text-shadow: 1px 1px 1px rgba(0,0,0,0.4); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.5); }
+.btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] { filter: none; background-color: #4a77d4; }
+.btn-block { width: 100%; display:block; }
+
+.btn-sonido, .btn-sonido:hover { text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); color: #ffffff; }
+.btn-sonido.active { color: rgba(255, 255, 255, 0.75); }
+.btn-sonido { background-color: #4a77d4; background-image: -moz-linear-gradient(top, #6eb6de, #4a77d4); background-image: -ms-linear-gradient(top, #6eb6de, #4a77d4); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#6eb6de), to(#4a77d4)); background-image: -webkit-linear-gradient(top, #6eb6de, #4a77d4); background-image: -o-linear-gradient(top, #6eb6de, #4a77d4); background-image: linear-gradient(top, #6eb6de, #4a77d4); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#6eb6de, endColorstr=#4a77d4, GradientType=0);  border: 1px solid #3762bc; text-shadow: 1px 1px 1px rgba(0,0,0,0.4); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.5); }
+.btn-sonido:hover, .btn-sonido:active, .btn-sonido.active, .btn-sonido.disabled, .btn-sonido[disabled] { filter: none; background-color: #4a77d4; }
+
+
+    </style>
+    
+    </head>
+    <body style="background-color: black;">
+        <video height="400"  style="position: absolute;left: 50%;transform: translate(-50%,0%);" >
+            <source  type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div id="botones"  ></div>
+ 
+    <script>
+        
+        var videos = ['v_are_you_running.mp4','v_no_pimpamtrucutrucu.mp4','v_no_mas_vida_que_mi_tio.mp4','v_no_que_te_avian.mp4','v_simpsons_5_fases_duelo.mp4','v_simpsons_a_fregar.mp4','v_simpsons_batman.mp4','v_simpsons_como_los_perdedores.mp4','v_simpsons_cosas_divertidas.mp4','v_simpsons_dale_un_besito_a_lo_que_se_mueve.mp4','v_simpsons_dejar_la_cerveza.mp4','v_simpsons_desde_que_era_chiquitin.mp4','v_simpsons_doy_el_callo_por_dinero.mp4','v_simpsons_ese_perro_ha_robado_un_jamon.mp4','v_simpsons_fin_de_semana_gratuito.mp4','v_simpsons_giliiiii.mp4','v_simpsons_hipotenusa.mp4','v_simpsons_homer_estrellao.mp4','v_simpsons_homer_no_funciona_con_no_cerveza.mp4','v_simpsons_la_caja_la_caja.mp4','v_simpsons_la_cosa_es_quejarse.mp4','v_simpsons_la_policia_no_sabia_asuntos_internos.mp4','v_simpsons_la_tonta_esta_en_el_bote.mp4','v_simpsons_lisa_3_metros.mp4','v_simpsons_mejor_que_ir_al_trabajo.mp4','v_simpsons_mojo_niaaaa.mp4','v_simpsons_mojo_niaaaa2.mp4','v_simpsons_mojo_pato.mp4','v_simpsons_mojo_residencia_simpsons.mp4','v_simpsons_mojo_territorio.mp4','v_simpsons_mojo_zumo.mp4','v_simpsons_mono_de_jade.mp4','v_simpsons_por_el_alcohol.mp4','v_simpsons_que_listo_soy_yo.mp4','v_simpsons_quiero_mi_bocadillo.mp4','v_simpsons_siii_siiiiii.mp4','v_simpsons_vives_en_el_pasado.mp4','v_simpsons_votos_a_favor.mp4','v_simpsons_yuhuu_soy_universitario.mp4','v_slapchop_5_segundos_y_listo.mp4','v_slapchop_fetuchini_bikini.mp4','v_slapchop_mira_mi_huevo.mp4','v_slapchop_no_es_bueno.mp4','v_slapchop_odias_hacer_ensaladas.mp4','v_slapchop_te_cuesta_un_dolar.mp4','v_slapchop_te_va_a_fascinar.mp4','v_slapchop_tu_vida_esta_mas_excitante.mp4'];
+        var sonidos = ['__a_tomar_pol_culo_todos.mp3','__bites_the_dust.mp3','__callas.mp3','__dakota.mp3','__hello_darkness.mp3','__inflar.mp3','__maricarmen.mp3','__me_da_igual.mp3','__oh_ma_gawd.mp3','__parda.mp3','__porque.mp3','__que_me_quedo_sin_comer.mp3','__say_something.mp3','__siuuu.mp3','__tengo_miedo.mp3','__thug_life.mp3','__trata_de_arrancarlo1.mp3','__trata_de_arrancarlo2.mp3','__turn_down.mp3','__yvolo.mp3','__yvolo2.mp3','__yvolo3.mp3','_chiquito_ahora.mp3','_chiquito_cobarde.mp3','_chiquito_gloria.mp3','_chiquito_lucas.mp3','_chiquito_muymal.mp3','_chiquito_noorl.mp3','_chiquito_nopuedo01.mp3','_chiquito_nopuedo02.mp3','_chiquito_por_favorl.mp3','_chiquito_quietorl.mp3','_pedrerol_becarios1.mp3','_pedrerol_becarios2.mp3','_pedrerol_ya_esta_bien.mp3','_rajoy_los_chuches_iva.mp3','_rajoy_pollo.mp3','_rajoy_por_favor_callense.mp3','_rajoy_tila.mp3','_rajpy_yo_te_quiero_alfonso.mp3','_ramonpitis_5_cosas.mp3','_ramonpitis_emidiotuchi.mp3','_ramonpitis_inestable.mp3','_ramonpitis_orejudo.mp3','_ramonpitis_pin_pam_pin.mp3','_ramonpitis_punetazos.mp3','_ramonpitis_vanidoso.mp3','_simpsons_corre_platano.mp3','_simpsons_incognito.mp3','_simpsons_klab01.mp3','_simpsons_klab02.mp3','_torrente_plan_perfecto.mp3'];
+        var v = document.getElementsByTagName("video")[0];
+        var s = document.getElementsByTagName("source")[0];
+        var posicionX=0;
+        var posicionY=0;
+        var ancho = 130;
+        var columnas = 9;
+        var inicioX = document.documentElement.clientWidth  - (ancho*columnas) ; // window.screen.width
+        console.log (inicioX)
+        var inicioY = 400;
+        cargaVideos();
+        cargaSonidos();
+       
+       
+        function cargaVideos(){
+            for (var i=0; i< videos.length; i++){
+               (function (i){
+                var btn = document.createElement("BUTTON");
+                var t = document.createTextNode( soloNombreCancion(videos[i]));
+                btn.setAttribute("class","btn btn-primary");
+                posicionX= (i%columnas)*ancho + inicioX/2;
+                posicionY = Math.trunc((i/columnas)) * 50 + inicioY;
+                btn.setAttribute("style","height:44px;width:"+ancho+"px; max-width:"+ancho+"px;position:fixed;left:"+posicionX+"px;top:"+posicionY+"px;");
+                btn.appendChild(t);
+                btn.onclick = function () {
+                    s.setAttribute('src', 'pelis/'+videos[i]);
+                    v.load();
+                    v.play();
+                  }
+                document.getElementById('botones').appendChild(btn);
+                })(i);
+            }
+        }
+        function cargaSonidos(){
+            var numVideos= videos.length;
+            for (var i=numVideos; i< sonidos.length + numVideos; i++){
+               (function (i){
+                var btn = document.createElement("BUTTON");
+                var t = document.createTextNode( soloNombreCancion(sonidos[i-numVideos]));
+                btn.setAttribute("class","btn btn-sonido");
+                posicionX= (i%columnas)*ancho + inicioX/2;
+                posicionY = Math.trunc((i/columnas)) * 50 + inicioY;
+                btn.setAttribute("style","height:44px;width:"+ancho+"px; max-width:"+ancho+"px;position:fixed;left:"+posicionX+"px;top:"+posicionY+"px;");
+                btn.appendChild(t);
+                btn.onclick = function () {
+                    s.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
+                    v.load();
+                    v.play();
+                  }
+                document.getElementById('botones').appendChild(btn);
+                })(i);
+            }
+        }
+        
+        function soloNombreCancion (_nombreLargo){
+            var nombreVideo = _nombreLargo.split(".")[0];
+            nombreVideo = nombreVideo.split("_");
+            nombreVideo = nombreVideo.slice(2);
+            var titulo="";
+            for (var i=0; i< nombreVideo.length; i++){
+                titulo = titulo +" "+nombreVideo[i];
+            }
+            return titulo;
+        }
+        
+    </script>
+    
+      </body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+<input id="myfiles" multiple type="file">
+
+
+
+<script>
+
+var pullfiles=function(){ 
+    // love the query selector
+    var fileInput = document.querySelector("#myfiles");
+    var files = fileInput.files;
+    // cache files.length 
+    var fl = files.length;
+    var i = 0;
+
+    while ( i < fl) {
+        // localize file var in the loop
+        var file = files[i];
+        console.log(file.name);
+        document.write("'"+ file.name + "',");
+        i++;
+    }    
+}
+
+// set the input element onchange to call pullfiles
+document.querySelector("#myfiles").onchange=pullfiles;
+
+//a.t
+</script>
+    
+      </body>
+</html>
