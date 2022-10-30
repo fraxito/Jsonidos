@@ -1,5 +1,5 @@
 let deferredPrompt;
-const version = "1.0";
+const version = "6.0";
 const cacheName = 'iSonidos-${version}';
 
 self.addEventListener('beforeinstallprompt', (e) => {
@@ -26,7 +26,9 @@ self.addEventListener('install', e => {
     caches.open(cacheName).then(cache => {
       return cache.addAll([
         '/',
-        '/index.html'
+        '/index.html',
+		'/pelis/',
+		'/sonidos/'
       ])
           .then(() => self.skipWaiting());
     })
