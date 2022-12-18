@@ -3,29 +3,29 @@
     "background_color": "#000000",
     "orientation": "portrait",
     "display": "fullscreen",
-    "scope": "/",
-    "start_url": "/?homescreen=1",
+    "scope": "/isonidos/",
+    "start_url": "/isonidos/?homescreen=1",
     "name": "iSonidos",
     "short_name": "iSonidos",
     "description": "iSonidos ahora en WEB",
     "icons": [
         {
-            "src": "/icon-192x192.png",
+            "src": "/isonidos/icon-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/icon-256x256.png",
+            "src": "/isonidos/icon-256x256.png",
             "sizes": "256x256",
             "type": "image/png"
         },
         {
-            "src": "/icon-384x384.png",
+            "src": "/isonidos/icon-384x384.png",
             "sizes": "384x384",
             "type": "image/png"
         },
         {
-            "src": "/icon-512x512.png",
+            "src": "/isonidos/icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         }

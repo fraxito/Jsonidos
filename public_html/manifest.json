@@ -24,8 +24,8 @@
         }
     ],
   "orientation": "portrait",
-  "start_url": "/?homescreen=1",
-  "scope": "/",
+  "start_url": "/isonidos/?homescreen=1",
+  "scope": "/isonidos/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000"
