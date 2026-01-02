@@ -128,8 +128,8 @@
         // Variables para el sistema de compartir
         let currentShareFile = '';
         let currentShareType = '';
-        let longPressTimer = null;
-        let isLongPress = false;
+        let currentPlayingFile = '';
+        let currentPlayingType = '';
         
         if (isMobile){
             document.getElementById("cajaBusqueda").classList.remove("form-control");
@@ -170,29 +170,13 @@
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:fixed;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
                 
-                // Evento click normal
+                // Evento click
                 btn.onclick = function (event) {
-                    if (!isLongPress) {
-                        s.setAttribute('src', 'pelis/'+videos[i]);
-                        v.load();
-                        v.play();
-                    }
-                    isLongPress = false;
-                }
-                
-                // Eventos para long press
-                btn.onmousedown = btn.ontouchstart = function(event) {
-                    isLongPress = false;
-                    longPressTimer = setTimeout(() => {
-                        isLongPress = true;
-                        const rect = btn.getBoundingClientRect();
-                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, videos[i], 'pelis');
-                        event.preventDefault();
-                    }, 500);
-                }
-                
-                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
-                    clearTimeout(longPressTimer);
+                    s.setAttribute('src', 'pelis/'+videos[i]);
+                    currentPlayingFile = videos[i];
+                    currentPlayingType = 'pelis';
+                    v.load();
+                    v.play();
                 }
                 
                 document.getElementById('botones').appendChild(btn);
@@ -212,29 +196,13 @@
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:fixed;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
                 
-                // Evento click normal
+                // Evento click
                 btn.onclick = function (event) {
-                    if (!isLongPress) {
-                        s.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
-                        v.load();
-                        v.play();
-                    }
-                    isLongPress = false;
-                }
-                
-                // Eventos para long press
-                btn.onmousedown = btn.ontouchstart = function(event) {
-                    isLongPress = false;
-                    longPressTimer = setTimeout(() => {
-                        isLongPress = true;
-                        const rect = btn.getBoundingClientRect();
-                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, sonidos[i-numVideos], 'sonidos');
-                        event.preventDefault();
-                    }, 500);
-                }
-                
-                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
-                    clearTimeout(longPressTimer);
+                    s2.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
+                    currentPlayingFile = sonidos[i-numVideos];
+                    currentPlayingType = 'sonidos';
+                    a.load();
+                    a.play();
                 }
                 
                 document.getElementById('botones').appendChild(btn);
@@ -264,29 +232,13 @@
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:absolute;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
                 
-                // Evento click normal
+                // Evento click
                 btn.onclick = function (event) {
-                    if (!isLongPress) {
-                        s.setAttribute('src', 'pelis/'+videos[i]);
-                        v.load();
-                        v.play();
-                    }
-                    isLongPress = false;
-                }
-                
-                // Eventos para long press
-                btn.onmousedown = btn.ontouchstart = function(event) {
-                    isLongPress = false;
-                    longPressTimer = setTimeout(() => {
-                        isLongPress = true;
-                        const rect = btn.getBoundingClientRect();
-                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, videos[i], 'pelis');
-                        event.preventDefault();
-                    }, 500);
-                }
-                
-                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
-                    clearTimeout(longPressTimer);
+                    s.setAttribute('src', 'pelis/'+videos[i]);
+                    currentPlayingFile = videos[i];
+                    currentPlayingType = 'pelis';
+                    v.load();
+                    v.play();
                 }
                 
                 document.getElementById('botones').appendChild(btn);
@@ -306,29 +258,11 @@
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:absolute;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
                 
-                // Evento click normal
+                // Evento click
                 btn.onclick = function (event) {
-                    if (!isLongPress) {
-                        s2.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
-                        a.load();
-                        a.play();
-                    }
-                    isLongPress = false;
-                }
-                
-                // Eventos para long press
-                btn.onmousedown = btn.ontouchstart = function(event) {
-                    isLongPress = false;
-                    longPressTimer = setTimeout(() => {
-                        isLongPress = true;
-                        const rect = btn.getBoundingClientRect();
-                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, sonidos[i-numVideos], 'sonidos');
-                        event.preventDefault();
-                    }, 500);
-                }
-                
-                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
-                    clearTimeout(longPressTimer);
+                    s2.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
+                    a.load();
+                    a.play();
                 }
                 
                 document.getElementById('botones').appendChild(btn);
@@ -437,6 +371,14 @@
     // Event listeners para el menú de compartir
     document.getElementById('copyFile').addEventListener('click', copyFileToClipboard);
     document.getElementById('closeShareMenu').addEventListener('click', hideShareMenu);
+
+    // Evento click en el video para compartir
+    v.addEventListener('click', function(event) {
+        if (currentPlayingFile && currentPlayingType) {
+            const rect = v.getBoundingClientRect();
+            showShareMenu(rect.left + rect.width/2, rect.top + rect.height + 10, currentPlayingFile, currentPlayingType);
+        }
+    });
 
     // Cerrar menú si se hace clic fuera de él
     document.addEventListener('click', function(event) {
