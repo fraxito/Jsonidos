@@ -98,10 +98,7 @@
         
         <!-- Menú de compartir -->
         <div id="shareMenu" class="share-menu">
-            <button id="shareWhatsApp">📱 Compartir por WhatsApp</button>
-            <button id="shareWeb">🔗 Compartir (Web Share API)</button>
-            <button id="copyLink">📋 Copiar enlace</button>
-            <button id="downloadFile">💾 Descargar archivo</button>
+            <button id="copyFile">📋 Copiar archivo para WhatsApp</button>
             <button class="close-btn" id="closeShareMenu">❌ Cerrar</button>
         </div>
         
@@ -387,15 +384,7 @@
         const shareMenu = document.getElementById('shareMenu');
         shareMenu.style.display = 'block';
         shareMenu.style.left = Math.min(x, window.innerWidth - 220) + 'px';
-        shareMenu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
-        
-        // Ocultar el menú si no es compatible con Web Share API
-        const webShareBtn = document.getElementById('shareWeb');
-        if (navigator.share) {
-            webShareBtn.style.display = 'block';
-        } else {
-            webShareBtn.style.display = 'none';
-        }
+        shareMenu.style.top = Math.min(y, window.innerHeight - 150) + 'px';
     }
 
     function hideShareMenu() {
@@ -404,80 +393,49 @@
         currentShareType = '';
     }
 
-    async function shareViaWhatsApp() {
-        const baseUrl = window.location.href.replace('index.html', '');
-        const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
-        const fileName = soloNombreCancion(currentShareFile);
-        const text = `¡Escucha este ${currentShareType === 'sonidos' ? 'sonido' : 'video'} de iSonidos! 🎵\n"${fileName}"\n${fileUrl}`;
-        
-        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        window.open(whatsappUrl, '_blank');
-        hideShareMenu();
-    }
-
-    async function shareViaWebAPI() {
-        if (navigator.share) {
+    async function copyFileToClipboard() {
+        try {
+            const baseUrl = window.location.href.replace('index.html', '');
+            const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
+            const fileName = soloNombreCancion(currentShareFile);
+            
+            // Descargar el archivo como blob
+            const response = await fetch(fileUrl);
+            if (!response.ok) {
+                throw new Error('No se pudo descargar el archivo');
+            }
+            
+            const blob = await response.blob();
+            const mimeType = currentShareType === 'sonidos' ? 'audio/mpeg' : 'video/mp4';
+            
+            // Crear ClipboardItem con el archivo
+            const clipboardItem = new ClipboardItem({
+                [mimeType]: blob
+            });
+            
+            // Copiar al portapapeles
+            await navigator.clipboard.write([clipboardItem]);
+            alert(`¡${currentShareType === 'sonidos' ? 'Audio' : 'Video'} copiado al portapapeles! 📋\nYa puedes pegarlo en WhatsApp`);
+            
+        } catch (err) {
+            console.log('Error al copiar archivo:', err);
+            // Fallback: copiar enlace si falla la copia del archivo
             try {
                 const baseUrl = window.location.href.replace('index.html', '');
                 const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
                 const fileName = soloNombreCancion(currentShareFile);
-                
-                await navigator.share({
-                    title: 'iSonidos - ' + fileName,
-                    text: `¡Mira este ${currentShareType === 'sonidos' ? 'sonido' : 'video'} de iSonidos!`,
-                    url: fileUrl
-                });
-            } catch (err) {
-                console.log('Error al compartir:', err);
+                const text = `${fileName}: ${fileUrl}`;
+                await navigator.clipboard.writeText(text);
+                alert('No se pudo copiar el archivo.\n¡Enlace copiado al portapapeles! 📋');
+            } catch (fallbackErr) {
+                alert('Error: No se pudo copiar el archivo ni el enlace');
             }
         }
-        hideShareMenu();
-    }
-
-    async function copyToClipboard() {
-        const baseUrl = window.location.href.replace('index.html', '');
-        const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
-        const fileName = soloNombreCancion(currentShareFile);
-        const text = `iSonidos - "${fileName}": ${fileUrl}`;
-        
-        try {
-            await navigator.clipboard.writeText(text);
-            alert('¡Enlace copiado al portapapeles! 📋');
-        } catch (err) {
-            // Fallback para navegadores que no soporten clipboard API
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                alert('¡Enlace copiado al portapapeles! 📋');
-            } catch (err) {
-                alert('No se pudo copiar el enlace');
-            }
-            document.body.removeChild(textArea);
-        }
-        hideShareMenu();
-    }
-
-    function downloadFile() {
-        const baseUrl = window.location.href.replace('index.html', '');
-        const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
-        
-        const link = document.createElement('a');
-        link.href = fileUrl;
-        link.download = currentShareFile;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
         hideShareMenu();
     }
 
     // Event listeners para el menú de compartir
-    document.getElementById('shareWhatsApp').addEventListener('click', shareViaWhatsApp);
-    document.getElementById('shareWeb').addEventListener('click', shareViaWebAPI);
-    document.getElementById('copyLink').addEventListener('click', copyToClipboard);
-    document.getElementById('downloadFile').addEventListener('click', downloadFile);
+    document.getElementById('copyFile').addEventListener('click', copyFileToClipboard);
     document.getElementById('closeShareMenu').addEventListener('click', hideShareMenu);
 
     // Cerrar menú si se hace clic fuera de él
