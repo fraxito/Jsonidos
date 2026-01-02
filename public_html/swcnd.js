@@ -28,7 +28,9 @@ self.addEventListener('install', e => {
         '/',
         '/index.html',
 	'/pelis/',
-	'/sonidos/'
+	'/sonidos/',
+        '/manifest.json',
+        '/manifest.webmanifest.json'
       ])
           .then(() => self.skipWaiting());
     })
