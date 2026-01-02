@@ -74,6 +74,10 @@
         var columnas = 11;
         var inicioX = document.documentElement.clientWidth  - (ancho*columnas) ; // window.screen.width
         var inicioY = 10;
+
+        // Evita avisos por <source> sin src al cargar la página
+        s.setAttribute('src', 'pelis/'+videos[0]);
+        s2.setAttribute('src', 'sonidos/'+sonidos[0]);
         if (isMobile){
             document.getElementById("cajaBusqueda").classList.remove("form-control");
             document.getElementById("cajaBusqueda").classList.add("form-control-mobile");
@@ -134,9 +138,9 @@
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:fixed;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
                 btn.onclick = function () {
-                    s.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
-                    v.load();
-                    v.play();
+                    s2.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
+                    a.load();
+                    a.play();
                   }
                 document.getElementById('botones').appendChild(btn);
                 })(i);
