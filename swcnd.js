@@ -1,6 +1,6 @@
 let deferredPrompt;
 const version = "7.0";
-const cacheName = 'iSonidos-${version}';
+const cacheName = `iSonidos-${version}`;
 
 self.addEventListener('beforeinstallprompt', (e) => {
   // Prevent Chrome 67 and earlier from automatically showing the prompt
@@ -25,12 +25,12 @@ self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(cacheName).then(cache => {
       return cache.addAll([
-        '/',
-        '/index.html',
-	'/pelis/',
-	'/sonidos/',
-        '/manifest.json',
-        '/manifest.webmanifest.json'
+        './',
+        './index.html',
+	'./pelis/',
+	'./sonidos/',
+        './manifest.json',
+        './manifest.webmanifest.json'
       ])
           .then(() => self.skipWaiting());
     })
