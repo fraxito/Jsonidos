@@ -3,13 +3,8 @@
     <head>
         <title>JVideos!</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="theme-color" content="#000000">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <meta name="apple-mobile-web-app-title" content="iSonidos">
-        <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-        <link rel="manifest" href="./manifest.json">
+        <meta name="viewport" content="">
+        <link rel="manifest" href="/isonidos/manifest.json">
         <style>
       @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 .btn { display: inline-block;  zoom: 1;  margin-bottom: 0; font-size: 14px; line-height: 13px; color: #333333; text-align: center;text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); vertical-align: middle; background-color: #f5f5f5; background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6); background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6)); background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6); background-image: -o-linear-gradient(top, #ffffff, #e6e6e6); background-image: linear-gradient(top, #ffffff, #e6e6e6); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#ffffff, endColorstr=#e6e6e6, GradientType=0); border-color: #e6e6e6 #e6e6e6 #e6e6e6; border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25); border: 1px solid #e6e6e6; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); cursor: pointer; margin-left: .3em; }
@@ -44,44 +39,6 @@
 }
 .btn-verde { color:greenyellow; border:2px solid; border-color: greenyellow;}
 
-/* Estilos para el menú de compartir */
-.share-menu {
-    position: fixed;
-    background: rgba(0, 0, 0, 0.9);
-    border: 2px solid #51565a;
-    border-radius: 10px;
-    padding: 10px;
-    z-index: 1000;
-    display: none;
-    min-width: 200px;
-}
-
-.share-menu button {
-    display: block;
-    width: 100%;
-    margin: 5px 0;
-    padding: 10px;
-    background: #51565a;
-    color: white;
-    border: 1px solid #3762bc;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.share-menu button:hover {
-    background: #3762bc;
-}
-
-.share-menu .close-btn {
-    background: #d32f2f;
-    border-color: #b71c1c;
-}
-
-.share-menu .close-btn:hover {
-    background: #b71c1c;
-}
-
     </style>
     
     </head>
@@ -95,16 +52,6 @@
         <audio class="audio" id="sonidosaudio" controls preload="none" style="display: none"> 
             <source  type="audio/mpeg">
        </audio>
-        
-        <!-- Menú de compartir -->
-        <div id="shareMenu" class="share-menu">
-            <button id="shareWhatsApp">📱 Compartir por WhatsApp</button>
-            <button id="shareWeb">🔗 Compartir (Web Share API)</button>
-            <button id="copyLink">📋 Copiar enlace</button>
-            <button id="downloadFile">💾 Descargar archivo</button>
-            <button class="close-btn" id="closeShareMenu">❌ Cerrar</button>
-        </div>
-        
         <div style="position: fixed;left: 50%;transform: translate(-50%,0%);">
             <input id="cajaBusqueda" type="text"  class="form-control" placeholder="buscar" onkeyup="busca();">
         </div>
@@ -127,13 +74,6 @@
         var columnas = 11;
         var inicioX = document.documentElement.clientWidth  - (ancho*columnas) ; // window.screen.width
         var inicioY = 10;
-        
-        // Variables para el sistema de compartir
-        let currentShareFile = '';
-        let currentShareType = '';
-        let longPressTimer = null;
-        let isLongPress = false;
-        
         if (isMobile){
             document.getElementById("cajaBusqueda").classList.remove("form-control");
             document.getElementById("cajaBusqueda").classList.add("form-control-mobile");
@@ -172,32 +112,11 @@
                 }
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:fixed;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
-                
-                // Evento click normal
-                btn.onclick = function (event) {
-                    if (!isLongPress) {
-                        s.setAttribute('src', 'pelis/'+videos[i]);
-                        v.load();
-                        v.play();
-                    }
-                    isLongPress = false;
-                }
-                
-                // Eventos para long press
-                btn.onmousedown = btn.ontouchstart = function(event) {
-                    isLongPress = false;
-                    longPressTimer = setTimeout(() => {
-                        isLongPress = true;
-                        const rect = btn.getBoundingClientRect();
-                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, videos[i], 'pelis');
-                        event.preventDefault();
-                    }, 500);
-                }
-                
-                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
-                    clearTimeout(longPressTimer);
-                }
-                
+                btn.onclick = function () {
+                    s.setAttribute('src', 'pelis/'+videos[i]);
+                    v.load();
+                    v.play();
+                  }
                 document.getElementById('botones').appendChild(btn);
                 })(i);
             }
@@ -214,32 +133,11 @@
                 if ( i%columnas==0){posicionY += 50; } 
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:fixed;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
-                
-                // Evento click normal
-                btn.onclick = function (event) {
-                    if (!isLongPress) {
-                        s.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
-                        v.load();
-                        v.play();
-                    }
-                    isLongPress = false;
-                }
-                
-                // Eventos para long press
-                btn.onmousedown = btn.ontouchstart = function(event) {
-                    isLongPress = false;
-                    longPressTimer = setTimeout(() => {
-                        isLongPress = true;
-                        const rect = btn.getBoundingClientRect();
-                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, sonidos[i-numVideos], 'sonidos');
-                        event.preventDefault();
-                    }, 500);
-                }
-                
-                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
-                    clearTimeout(longPressTimer);
-                }
-                
+                btn.onclick = function () {
+                    s.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
+                    v.load();
+                    v.play();
+                  }
                 document.getElementById('botones').appendChild(btn);
                 })(i);
             }
@@ -266,32 +164,11 @@
                 
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:absolute;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
-                
-                // Evento click normal
-                btn.onclick = function (event) {
-                    if (!isLongPress) {
-                        s.setAttribute('src', 'pelis/'+videos[i]);
-                        v.load();
-                        v.play();
-                    }
-                    isLongPress = false;
-                }
-                
-                // Eventos para long press
-                btn.onmousedown = btn.ontouchstart = function(event) {
-                    isLongPress = false;
-                    longPressTimer = setTimeout(() => {
-                        isLongPress = true;
-                        const rect = btn.getBoundingClientRect();
-                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, videos[i], 'pelis');
-                        event.preventDefault();
-                    }, 500);
-                }
-                
-                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
-                    clearTimeout(longPressTimer);
-                }
-                
+                btn.onclick = function () {
+                    s.setAttribute('src', 'pelis/'+videos[i]);
+                    v.load();
+                    v.play();
+                  }
                 document.getElementById('botones').appendChild(btn);
                 })(i);
             }
@@ -308,32 +185,11 @@
                 if ( i%columnas==0){posicionY += 100; } 
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:absolute;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
-                
-                // Evento click normal
-                btn.onclick = function (event) {
-                    if (!isLongPress) {
-                        s2.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
-                        a.load();
-                        a.play();
-                    }
-                    isLongPress = false;
-                }
-                
-                // Eventos para long press
-                btn.onmousedown = btn.ontouchstart = function(event) {
-                    isLongPress = false;
-                    longPressTimer = setTimeout(() => {
-                        isLongPress = true;
-                        const rect = btn.getBoundingClientRect();
-                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, sonidos[i-numVideos], 'sonidos');
-                        event.preventDefault();
-                    }, 500);
-                }
-                
-                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
-                    clearTimeout(longPressTimer);
-                }
-                
+                btn.onclick = function () {
+                    s2.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
+                    a.load();
+                    a.play();
+                  }
                 document.getElementById('botones').appendChild(btn);
                 })(i);
             }
@@ -343,7 +199,7 @@
 //registra el serviceworker que se encarga de manejar el progresive web app 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('./swcnd.js').then(function(registration) {
+          navigator.serviceWorker.register('/isonidos/swcnd.js').then(function(registration) {
             //// Registration was successful
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           }, function(err) {
@@ -378,115 +234,6 @@
             });            
         }
     }
-
-    // Funciones para el sistema de compartir
-    function showShareMenu(x, y, fileName, fileType) {
-        currentShareFile = fileName;
-        currentShareType = fileType;
-        
-        const shareMenu = document.getElementById('shareMenu');
-        shareMenu.style.display = 'block';
-        shareMenu.style.left = Math.min(x, window.innerWidth - 220) + 'px';
-        shareMenu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
-        
-        // Ocultar el menú si no es compatible con Web Share API
-        const webShareBtn = document.getElementById('shareWeb');
-        if (navigator.share) {
-            webShareBtn.style.display = 'block';
-        } else {
-            webShareBtn.style.display = 'none';
-        }
-    }
-
-    function hideShareMenu() {
-        document.getElementById('shareMenu').style.display = 'none';
-        currentShareFile = '';
-        currentShareType = '';
-    }
-
-    async function shareViaWhatsApp() {
-        const baseUrl = window.location.href.replace('index.html', '');
-        const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
-        const fileName = soloNombreCancion(currentShareFile);
-        const text = `¡Escucha este ${currentShareType === 'sonidos' ? 'sonido' : 'video'} de iSonidos! 🎵\n"${fileName}"\n${fileUrl}`;
-        
-        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        window.open(whatsappUrl, '_blank');
-        hideShareMenu();
-    }
-
-    async function shareViaWebAPI() {
-        if (navigator.share) {
-            try {
-                const baseUrl = window.location.href.replace('index.html', '');
-                const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
-                const fileName = soloNombreCancion(currentShareFile);
-                
-                await navigator.share({
-                    title: 'iSonidos - ' + fileName,
-                    text: `¡Mira este ${currentShareType === 'sonidos' ? 'sonido' : 'video'} de iSonidos!`,
-                    url: fileUrl
-                });
-            } catch (err) {
-                console.log('Error al compartir:', err);
-            }
-        }
-        hideShareMenu();
-    }
-
-    async function copyToClipboard() {
-        const baseUrl = window.location.href.replace('index.html', '');
-        const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
-        const fileName = soloNombreCancion(currentShareFile);
-        const text = `iSonidos - "${fileName}": ${fileUrl}`;
-        
-        try {
-            await navigator.clipboard.writeText(text);
-            alert('¡Enlace copiado al portapapeles! 📋');
-        } catch (err) {
-            // Fallback para navegadores que no soporten clipboard API
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                alert('¡Enlace copiado al portapapeles! 📋');
-            } catch (err) {
-                alert('No se pudo copiar el enlace');
-            }
-            document.body.removeChild(textArea);
-        }
-        hideShareMenu();
-    }
-
-    function downloadFile() {
-        const baseUrl = window.location.href.replace('index.html', '');
-        const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
-        
-        const link = document.createElement('a');
-        link.href = fileUrl;
-        link.download = currentShareFile;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        hideShareMenu();
-    }
-
-    // Event listeners para el menú de compartir
-    document.getElementById('shareWhatsApp').addEventListener('click', shareViaWhatsApp);
-    document.getElementById('shareWeb').addEventListener('click', shareViaWebAPI);
-    document.getElementById('copyLink').addEventListener('click', copyToClipboard);
-    document.getElementById('downloadFile').addEventListener('click', downloadFile);
-    document.getElementById('closeShareMenu').addEventListener('click', hideShareMenu);
-
-    // Cerrar menú si se hace clic fuera de él
-    document.addEventListener('click', function(event) {
-        const shareMenu = document.getElementById('shareMenu');
-        if (!shareMenu.contains(event.target) && shareMenu.style.display === 'block') {
-            hideShareMenu();
-        }
-    });
 
     </script>
     
