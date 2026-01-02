@@ -3,7 +3,7 @@
     <head>
         <title>JVideos!</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="theme-color" content="#000000">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -97,9 +97,10 @@
        </audio>
         
         <!-- Menú de compartir -->
-        <div id="shareMenu" class="share-menu">
-            <button id="copyFile">📋 Copiar archivo para WhatsApp</button>
-            <button class="close-btn" id="closeShareMenu">❌ Cerrar</button>
+                <div id="shareMenu" class="share-menu">
+            <button id="shareWhatsApp">Enviar por WhatsApp</button>
+            <button id="copyFile">Copiar archivo para WhatsApp</button>
+            <button class="close-btn" id="closeShareMenu">Cerrar</button>
         </div>
         
         <div style="position: fixed;left: 50%;transform: translate(-50%,0%);">
@@ -130,6 +131,9 @@
         let currentShareType = '';
         let currentPlayingFile = '';
         let currentPlayingType = '';
+        let longPressTimer = null;
+        let longPressTriggered = false;
+        const LONG_PRESS_DELAY = 600;
         
         if (isMobile){
             document.getElementById("cajaBusqueda").classList.remove("form-control");
@@ -261,6 +265,8 @@
                 // Evento click
                 btn.onclick = function (event) {
                     s2.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
+                    currentPlayingFile = sonidos[i-numVideos];
+                    currentPlayingType = 'sonidos';
                     a.load();
                     a.play();
                 }
@@ -326,11 +332,15 @@
         currentShareFile = '';
         currentShareType = '';
     }
+    
+    function getCurrentFileUrl() {
+        const baseUrl = window.location.href.replace('index.html', '');
+        return baseUrl + currentShareType + '/' + currentShareFile;
+    }
 
     async function copyFileToClipboard() {
         try {
-            const baseUrl = window.location.href.replace('index.html', '');
-            const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
+            const fileUrl = getCurrentFileUrl();
             const fileName = soloNombreCancion(currentShareFile);
             
             // Descargar el archivo como blob
@@ -355,8 +365,7 @@
             console.log('Error al copiar archivo:', err);
             // Fallback: copiar enlace si falla la copia del archivo
             try {
-                const baseUrl = window.location.href.replace('index.html', '');
-                const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
+                const fileUrl = getCurrentFileUrl();
                 const fileName = soloNombreCancion(currentShareFile);
                 const text = `${fileName}: ${fileUrl}`;
                 await navigator.clipboard.writeText(text);
@@ -368,12 +377,62 @@
         hideShareMenu();
     }
 
+    async function shareViaWhatsApp() {
+        if (!currentShareFile || !currentShareType) {
+            return;
+        }
+        const fileUrl = getCurrentFileUrl();
+        const message = `Mira este clip: ${fileUrl}`;
+        if (navigator.share) {
+            try {
+                await navigator.share({ text: message, url: fileUrl });
+                hideShareMenu();
+                return;
+            } catch (err) {
+                console.log('navigator.share falló, abriendo WhatsApp:', err);
+            }
+        }
+        const waUrl = 'https://wa.me/?text=' + encodeURIComponent(message);
+        window.open(waUrl, '_blank');
+        hideShareMenu();
+    }
+
+    function cancelLongPress() {
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
+    }
+
+    function startLongPress() {
+        if (!currentPlayingFile || !currentPlayingType) {
+            return;
+        }
+        longPressTriggered = false;
+        cancelLongPress();
+        longPressTimer = setTimeout(function() {
+            longPressTriggered = true;
+            const rect = v.getBoundingClientRect();
+            showShareMenu(rect.left + rect.width/2, rect.top + rect.height + 10, currentPlayingFile, currentPlayingType);
+        }, LONG_PRESS_DELAY);
+    }
+
     // Event listeners para el menú de compartir
+    document.getElementById('shareWhatsApp').addEventListener('click', shareViaWhatsApp);
     document.getElementById('copyFile').addEventListener('click', copyFileToClipboard);
     document.getElementById('closeShareMenu').addEventListener('click', hideShareMenu);
+    v.addEventListener('pointerdown', startLongPress);
+    v.addEventListener('pointerup', cancelLongPress);
+    v.addEventListener('pointerleave', cancelLongPress);
+    v.addEventListener('pointercancel', cancelLongPress);
 
     // Evento click en el video para compartir
     v.addEventListener('click', function(event) {
+        cancelLongPress();
+        if (longPressTriggered) {
+            longPressTriggered = false;
+            return;
+        }
         if (currentPlayingFile && currentPlayingType) {
             const rect = v.getBoundingClientRect();
             showShareMenu(rect.left + rect.width/2, rect.top + rect.height + 10, currentPlayingFile, currentPlayingType);
