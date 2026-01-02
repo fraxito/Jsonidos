@@ -44,6 +44,23 @@
 }
 .btn-verde { color:greenyellow; border:2px solid; border-color: greenyellow;}
 
+#botones.mobile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 460px 12px 40px;
+    box-sizing: border-box;
+}
+
+#botones.mobile-grid .btn {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100%;
+    max-width: 100%;
+    height: 80px;
+}
+
 /* Estilos para el menú de compartir */
 .share-menu {
     position: fixed;
@@ -138,8 +155,9 @@
         if (isMobile){
             document.getElementById("cajaBusqueda").classList.remove("form-control");
             document.getElementById("cajaBusqueda").classList.add("form-control-mobile");
+            document.getElementById("botones").classList.add("mobile-grid");
             posicionX=0;
-            posicionY=350;
+            posicionY=0;
             columnas = 6;
             ancho = (document.documentElement.clientWidth / columnas) -1;
             alto = 80;
@@ -230,10 +248,7 @@
                 var btn = document.createElement("BUTTON");
                 var t = document.createTextNode( soloNombreCancion(videos[i]));
                 btn.setAttribute("class","btn btn-primary btn-large");
-                posicionX= (i%columnas)*ancho + inicioX/2;
-                if ( i%columnas==0){posicionY += 100;} 
-                
-                btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:absolute;left:"+posicionX+"px;top:"+posicionY+"px;");
+                btn.setAttribute("style","height:"+alto+"px;");
                 btn.appendChild(t);
                 
                 // Evento click
@@ -257,9 +272,7 @@
                 var btn = document.createElement("BUTTON");
                 var t = document.createTextNode( soloNombreCancion(sonidos[i-numVideos]));
                 btn.setAttribute("class","btn btn-sonido btn-large");
-                posicionX= (i%columnas)*ancho + inicioX/2;
-                if ( i%columnas==0){posicionY += 100; } 
-                btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:absolute;left:"+posicionX+"px;top:"+posicionY+"px;");
+                btn.setAttribute("style","height:"+alto+"px;");
                 btn.appendChild(t);
                 
                 // Evento click
