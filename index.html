@@ -3,7 +3,7 @@
     <head>
         <title>JVideos!</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="theme-color" content="#000000">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -43,23 +43,6 @@
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out
 }
 .btn-verde { color:greenyellow; border:2px solid; border-color: greenyellow;}
-
-#botones.mobile-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-    padding: 460px 12px 40px;
-    box-sizing: border-box;
-}
-
-#botones.mobile-grid .btn {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    width: 100%;
-    max-width: 100%;
-    height: 80px;
-}
 
 /* Estilos para el menú de compartir */
 .share-menu {
@@ -114,10 +97,12 @@
        </audio>
         
         <!-- Menú de compartir -->
-                <div id="shareMenu" class="share-menu">
-            <button id="shareWhatsApp">Enviar por WhatsApp</button>
-            <button id="copyFile">Copiar archivo para WhatsApp</button>
-            <button class="close-btn" id="closeShareMenu">Cerrar</button>
+        <div id="shareMenu" class="share-menu">
+            <button id="shareWhatsApp">📱 Compartir por WhatsApp</button>
+            <button id="shareWeb">🔗 Compartir (Web Share API)</button>
+            <button id="copyLink">📋 Copiar enlace</button>
+            <button id="downloadFile">💾 Descargar archivo</button>
+            <button class="close-btn" id="closeShareMenu">❌ Cerrar</button>
         </div>
         
         <div style="position: fixed;left: 50%;transform: translate(-50%,0%);">
@@ -146,18 +131,14 @@
         // Variables para el sistema de compartir
         let currentShareFile = '';
         let currentShareType = '';
-        let currentPlayingFile = '';
-        let currentPlayingType = '';
         let longPressTimer = null;
-        let longPressTriggered = false;
-        const LONG_PRESS_DELAY = 600;
+        let isLongPress = false;
         
         if (isMobile){
             document.getElementById("cajaBusqueda").classList.remove("form-control");
             document.getElementById("cajaBusqueda").classList.add("form-control-mobile");
-            document.getElementById("botones").classList.add("mobile-grid");
             posicionX=0;
-            posicionY=0;
+            posicionY=350;
             columnas = 6;
             ancho = (document.documentElement.clientWidth / columnas) -1;
             alto = 80;
@@ -192,13 +173,29 @@
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:fixed;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
                 
-                // Evento click
+                // Evento click normal
                 btn.onclick = function (event) {
-                    s.setAttribute('src', 'pelis/'+videos[i]);
-                    currentPlayingFile = videos[i];
-                    currentPlayingType = 'pelis';
-                    v.load();
-                    v.play();
+                    if (!isLongPress) {
+                        s.setAttribute('src', 'pelis/'+videos[i]);
+                        v.load();
+                        v.play();
+                    }
+                    isLongPress = false;
+                }
+                
+                // Eventos para long press
+                btn.onmousedown = btn.ontouchstart = function(event) {
+                    isLongPress = false;
+                    longPressTimer = setTimeout(() => {
+                        isLongPress = true;
+                        const rect = btn.getBoundingClientRect();
+                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, videos[i], 'pelis');
+                        event.preventDefault();
+                    }, 500);
+                }
+                
+                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
+                    clearTimeout(longPressTimer);
                 }
                 
                 document.getElementById('botones').appendChild(btn);
@@ -218,13 +215,29 @@
                 btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:fixed;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
                 
-                // Evento click
+                // Evento click normal
                 btn.onclick = function (event) {
-                    s2.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
-                    currentPlayingFile = sonidos[i-numVideos];
-                    currentPlayingType = 'sonidos';
-                    a.load();
-                    a.play();
+                    if (!isLongPress) {
+                        s.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
+                        v.load();
+                        v.play();
+                    }
+                    isLongPress = false;
+                }
+                
+                // Eventos para long press
+                btn.onmousedown = btn.ontouchstart = function(event) {
+                    isLongPress = false;
+                    longPressTimer = setTimeout(() => {
+                        isLongPress = true;
+                        const rect = btn.getBoundingClientRect();
+                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, sonidos[i-numVideos], 'sonidos');
+                        event.preventDefault();
+                    }, 500);
+                }
+                
+                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
+                    clearTimeout(longPressTimer);
                 }
                 
                 document.getElementById('botones').appendChild(btn);
@@ -248,16 +261,35 @@
                 var btn = document.createElement("BUTTON");
                 var t = document.createTextNode( soloNombreCancion(videos[i]));
                 btn.setAttribute("class","btn btn-primary btn-large");
-                btn.setAttribute("style","height:"+alto+"px;");
+                posicionX= (i%columnas)*ancho + inicioX/2;
+                if ( i%columnas==0){posicionY += 100;} 
+                
+                btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:absolute;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
                 
-                // Evento click
+                // Evento click normal
                 btn.onclick = function (event) {
-                    s.setAttribute('src', 'pelis/'+videos[i]);
-                    currentPlayingFile = videos[i];
-                    currentPlayingType = 'pelis';
-                    v.load();
-                    v.play();
+                    if (!isLongPress) {
+                        s.setAttribute('src', 'pelis/'+videos[i]);
+                        v.load();
+                        v.play();
+                    }
+                    isLongPress = false;
+                }
+                
+                // Eventos para long press
+                btn.onmousedown = btn.ontouchstart = function(event) {
+                    isLongPress = false;
+                    longPressTimer = setTimeout(() => {
+                        isLongPress = true;
+                        const rect = btn.getBoundingClientRect();
+                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, videos[i], 'pelis');
+                        event.preventDefault();
+                    }, 500);
+                }
+                
+                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
+                    clearTimeout(longPressTimer);
                 }
                 
                 document.getElementById('botones').appendChild(btn);
@@ -272,16 +304,34 @@
                 var btn = document.createElement("BUTTON");
                 var t = document.createTextNode( soloNombreCancion(sonidos[i-numVideos]));
                 btn.setAttribute("class","btn btn-sonido btn-large");
-                btn.setAttribute("style","height:"+alto+"px;");
+                posicionX= (i%columnas)*ancho + inicioX/2;
+                if ( i%columnas==0){posicionY += 100; } 
+                btn.setAttribute("style","height:"+alto+"px;width:"+ancho+"px; max-width:"+ancho+"px;position:absolute;left:"+posicionX+"px;top:"+posicionY+"px;");
                 btn.appendChild(t);
                 
-                // Evento click
+                // Evento click normal
                 btn.onclick = function (event) {
-                    s2.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
-                    currentPlayingFile = sonidos[i-numVideos];
-                    currentPlayingType = 'sonidos';
-                    a.load();
-                    a.play();
+                    if (!isLongPress) {
+                        s2.setAttribute('src', 'sonidos/'+sonidos[i-numVideos]);
+                        a.load();
+                        a.play();
+                    }
+                    isLongPress = false;
+                }
+                
+                // Eventos para long press
+                btn.onmousedown = btn.ontouchstart = function(event) {
+                    isLongPress = false;
+                    longPressTimer = setTimeout(() => {
+                        isLongPress = true;
+                        const rect = btn.getBoundingClientRect();
+                        showShareMenu(rect.left + rect.width/2, rect.top + rect.height, sonidos[i-numVideos], 'sonidos');
+                        event.preventDefault();
+                    }, 500);
+                }
+                
+                btn.onmouseup = btn.ontouchend = btn.onmouseleave = function() {
+                    clearTimeout(longPressTimer);
                 }
                 
                 document.getElementById('botones').appendChild(btn);
@@ -337,7 +387,15 @@
         const shareMenu = document.getElementById('shareMenu');
         shareMenu.style.display = 'block';
         shareMenu.style.left = Math.min(x, window.innerWidth - 220) + 'px';
-        shareMenu.style.top = Math.min(y, window.innerHeight - 150) + 'px';
+        shareMenu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
+        
+        // Ocultar el menú si no es compatible con Web Share API
+        const webShareBtn = document.getElementById('shareWeb');
+        if (navigator.share) {
+            webShareBtn.style.display = 'block';
+        } else {
+            webShareBtn.style.display = 'none';
+        }
     }
 
     function hideShareMenu() {
@@ -345,112 +403,82 @@
         currentShareFile = '';
         currentShareType = '';
     }
-    
-    function getCurrentFileUrl() {
-        const baseUrl = window.location.href.replace('index.html', '');
-        return baseUrl + currentShareType + '/' + currentShareFile;
-    }
-
-    async function copyFileToClipboard() {
-        try {
-            const fileUrl = getCurrentFileUrl();
-            const fileName = soloNombreCancion(currentShareFile);
-            
-            // Descargar el archivo como blob
-            const response = await fetch(fileUrl);
-            if (!response.ok) {
-                throw new Error('No se pudo descargar el archivo');
-            }
-            
-            const blob = await response.blob();
-            const mimeType = currentShareType === 'sonidos' ? 'audio/mpeg' : 'video/mp4';
-            
-            // Crear ClipboardItem con el archivo
-            const clipboardItem = new ClipboardItem({
-                [mimeType]: blob
-            });
-            
-            // Copiar al portapapeles
-            await navigator.clipboard.write([clipboardItem]);
-            alert(`¡${currentShareType === 'sonidos' ? 'Audio' : 'Video'} copiado al portapapeles! 📋\nYa puedes pegarlo en WhatsApp`);
-            
-        } catch (err) {
-            console.log('Error al copiar archivo:', err);
-            // Fallback: copiar enlace si falla la copia del archivo
-            try {
-                const fileUrl = getCurrentFileUrl();
-                const fileName = soloNombreCancion(currentShareFile);
-                const text = `${fileName}: ${fileUrl}`;
-                await navigator.clipboard.writeText(text);
-                alert('No se pudo copiar el archivo.\n¡Enlace copiado al portapapeles! 📋');
-            } catch (fallbackErr) {
-                alert('Error: No se pudo copiar el archivo ni el enlace');
-            }
-        }
-        hideShareMenu();
-    }
 
     async function shareViaWhatsApp() {
-        if (!currentShareFile || !currentShareType) {
-            return;
-        }
-        const fileUrl = getCurrentFileUrl();
-        const message = `Mira este clip: ${fileUrl}`;
-        if (navigator.share) {
-            try {
-                await navigator.share({ text: message, url: fileUrl });
-                hideShareMenu();
-                return;
-            } catch (err) {
-                console.log('navigator.share falló, abriendo WhatsApp:', err);
-            }
-        }
-        const waUrl = 'https://wa.me/?text=' + encodeURIComponent(message);
-        window.open(waUrl, '_blank');
+        const baseUrl = window.location.href.replace('index.html', '');
+        const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
+        const fileName = soloNombreCancion(currentShareFile);
+        const text = `¡Escucha este ${currentShareType === 'sonidos' ? 'sonido' : 'video'} de iSonidos! 🎵\n"${fileName}"\n${fileUrl}`;
+        
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(whatsappUrl, '_blank');
         hideShareMenu();
     }
 
-    function cancelLongPress() {
-        if (longPressTimer) {
-            clearTimeout(longPressTimer);
-            longPressTimer = null;
+    async function shareViaWebAPI() {
+        if (navigator.share) {
+            try {
+                const baseUrl = window.location.href.replace('index.html', '');
+                const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
+                const fileName = soloNombreCancion(currentShareFile);
+                
+                await navigator.share({
+                    title: 'iSonidos - ' + fileName,
+                    text: `¡Mira este ${currentShareType === 'sonidos' ? 'sonido' : 'video'} de iSonidos!`,
+                    url: fileUrl
+                });
+            } catch (err) {
+                console.log('Error al compartir:', err);
+            }
         }
+        hideShareMenu();
     }
 
-    function startLongPress() {
-        if (!currentPlayingFile || !currentPlayingType) {
-            return;
+    async function copyToClipboard() {
+        const baseUrl = window.location.href.replace('index.html', '');
+        const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
+        const fileName = soloNombreCancion(currentShareFile);
+        const text = `iSonidos - "${fileName}": ${fileUrl}`;
+        
+        try {
+            await navigator.clipboard.writeText(text);
+            alert('¡Enlace copiado al portapapeles! 📋');
+        } catch (err) {
+            // Fallback para navegadores que no soporten clipboard API
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('¡Enlace copiado al portapapeles! 📋');
+            } catch (err) {
+                alert('No se pudo copiar el enlace');
+            }
+            document.body.removeChild(textArea);
         }
-        longPressTriggered = false;
-        cancelLongPress();
-        longPressTimer = setTimeout(function() {
-            longPressTriggered = true;
-            const rect = v.getBoundingClientRect();
-            showShareMenu(rect.left + rect.width/2, rect.top + rect.height + 10, currentPlayingFile, currentPlayingType);
-        }, LONG_PRESS_DELAY);
+        hideShareMenu();
+    }
+
+    function downloadFile() {
+        const baseUrl = window.location.href.replace('index.html', '');
+        const fileUrl = baseUrl + currentShareType + '/' + currentShareFile;
+        
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.download = currentShareFile;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        hideShareMenu();
     }
 
     // Event listeners para el menú de compartir
     document.getElementById('shareWhatsApp').addEventListener('click', shareViaWhatsApp);
-    document.getElementById('copyFile').addEventListener('click', copyFileToClipboard);
+    document.getElementById('shareWeb').addEventListener('click', shareViaWebAPI);
+    document.getElementById('copyLink').addEventListener('click', copyToClipboard);
+    document.getElementById('downloadFile').addEventListener('click', downloadFile);
     document.getElementById('closeShareMenu').addEventListener('click', hideShareMenu);
-    v.addEventListener('pointerdown', startLongPress);
-    v.addEventListener('pointerup', cancelLongPress);
-    v.addEventListener('pointerleave', cancelLongPress);
-    v.addEventListener('pointercancel', cancelLongPress);
-
-    // Evento click en el video para compartir
-    v.addEventListener('click', function(event) {
-        cancelLongPress();
-        if (longPressTriggered) {
-            longPressTriggered = false;
-            return;
-        }
-        if (currentPlayingFile && currentPlayingType) {
-            const rect = v.getBoundingClientRect();
-            showShareMenu(rect.left + rect.width/2, rect.top + rect.height + 10, currentPlayingFile, currentPlayingType);
-        }
-    });
 
     // Cerrar menú si se hace clic fuera de él
     document.addEventListener('click', function(event) {
